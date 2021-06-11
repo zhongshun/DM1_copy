@@ -17,14 +17,14 @@ clf; hold on;
 axis equal; axis off; axis([X_MIN X_MAX+4 Y_MIN Y_MAX]);
 
 
-%Plot Environment
+%% Plot Environment
 patch( environment{1}(:,1) , environment{1}(:,2) , 0.1*ones(1,length(environment{1}(:,1)) ) , ...
     'w' , 'linewidth' , 1.5 );
 for i = 2 : size(environment,2)
     patch( environment{i}(:,1) , environment{i}(:,2) , 0.1*ones(1,length(environment{i}(:,1)) ) , ...
         'k' , 'EdgeColor' , [0 0 0] , 'FaceColor' , [0.8 0.8 0.8] , 'linewidth' , 1.5 );
 end
-
+%%
 
 
 

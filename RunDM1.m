@@ -1,25 +1,40 @@
-function [Initial_Agent,Initial_Opponent,Initial_Agent_Region,Assets_Collected] = RunDM1(One_Pass,T,Asset_Position,Negtive_Reward,...
-    Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,step,Discount_factor,environment,Precompute_Path,WiseUp_Index)
+function [Initial_Agent,Initial_Opponent,Initial_Agent_Region,Assets_Collected] = RunDM1(One_Pass,Lookahead,Asset_Position,Negtive_Reward,...
+    Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,step,Discount_factor,environment,Precompute_Path,WiseUp_Index,heur_penalty_std,heur_agent_detection_weight,epsilon)
 
-% RunDM1(Tree,T,Asset,Negtive_Reward,Negtive_Asset,Number_of_Function,Function_index_size,
-% Visibility_Data,Region,Asset_Visibility_Data,step)
 
-epsilon = 0.0001;
-% Discount_factor = 1;
-pd = makedist('Normal','mu',0,'sigma',9);
-x = 1:50;
-% PDF_Gaussian = pdf(pd,x);
-PDF_Gaussian = 1./(10+x);
+%% For the heuristic
+environment_min_x = min(environment{1}(:,1));
+environment_max_x = max(environment{1}(:,1));
+environment_min_y = min(environment{1}(:,2));
+environment_max_y = max(environment{1}(:,2));
+X_MIN = environment_min_x-0.1*(environment_max_x-environment_min_x);
+X_MAX = environment_max_x+0.1*(environment_max_x-environment_min_x);
+Y_MIN = environment_min_y-0.1*(environment_max_y-environment_min_y);
+Y_MAX = environment_max_y+0.1*(environment_max_y-environment_min_y); 
 
-for i = 2*T+1 :-1:1
-    list =  find(One_Pass.Nodes.Generation == i);
-    if i == 2*T+1
+pd = makedist('Normal','mu',0,'sigma',heur_penalty_std);
+x = 1:floor(X_MAX+Y_MAX);
+PDF_Gaussian = pdf(pd,x);
+
+%% Run one iteration of DM1
+
+for i = 2*Lookahead+1 : -1: 1
+    
+    % Find all nodes at the current level
+    list = find(One_Pass.Nodes.Generation == i);
+    
+    % If leaf node
+    if i == 2*Lookahead+1
+        
+        % for all leaf nodes
         for j=1:nnz(list)
+            
             %   List all the reward value based on the detection of one
             %   of the assests or not
             Reward_visbility = Heuristic2(One_Pass.Nodes.Agent{list(j)}, One_Pass.Nodes.Opponent{list(j)}, One_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
-                Negtive_Asset,Asset_Position,One_Pass.Nodes.Detection_Asset_Collect{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index);
-            E_them =  One_Pass.Nodes.Current_Step_reward(list(j)) + Reward_visbility;
+                Negtive_Asset,Asset_Position,One_Pass.Nodes.Assets_Collected{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index,heur_agent_detection_weight,epsilon);
+            
+            E_them =  One_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + Reward_visbility;
             %             One_Pass.Nodes.E_them{list(j)} = E_them;
  
             E_them_temp = E_them;
@@ -192,7 +207,7 @@ end
 % %find the optimal path
 One_Pass_Node_path = 1;
 One_Pass_Best_node = 1;
-for i = 2:2*T+1
+for i = 2:2*Lookahead+1
     One_Pass_Best_node = One_Pass.Nodes.Decision_Node(One_Pass_Best_node);
     One_Pass_Node_path = [One_Pass_Node_path One_Pass_Best_node];
 end

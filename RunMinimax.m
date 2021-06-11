@@ -24,7 +24,7 @@ for i = 2*T+1 :-1:1
             Reward_visbility = Heuristic2_minimax(Minimax_Pass.Nodes.Agent{list(j)}, Minimax_Pass.Nodes.Opponent{list(j)}, Minimax_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
                 Negtive_Asset,Asset_Position,One_Pass.Nodes.Detection_Asset_Collect{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index);
             
-            E_them =  Minimax_Pass.Nodes.Current_Step_reward(list(j)) + Reward_visbility;
+            E_them =  Minimax_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + Reward_visbility;
             Detection_Asset_Collect = Minimax_Pass.Nodes.Detection_Asset_Collect{list(j)};
             for N = Function_index_size:-1:1
                 E_them = E_them - (Discount_factor^Detection_Asset_Collect(N))...

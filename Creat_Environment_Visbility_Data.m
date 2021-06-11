@@ -1,11 +1,3 @@
-epsilon = 0.000000001;
-
-
-%Snap distance (distance within which an observer location will be snapped to the
-%boundary before the visibility polygon is computed)
-snap_distance = 0.05;
-
-
 
 %Read environment geometry from file
 % environment = read_vertices_from_file('./Environments/M_starstar12.environment');
@@ -13,10 +5,10 @@ environment_min_x = min(environment{1}(:,1));
 environment_max_x = max(environment{1}(:,1));
 environment_min_y = min(environment{1}(:,2));
 environment_max_y = max(environment{1}(:,2));
-X_MIN = environment_min_x-0.1*(environment_max_x-environment_min_x);
-X_MAX = environment_max_x+0.1*(environment_max_x-environment_min_x);
-Y_MIN = environment_min_y-0.1*(environment_max_y-environment_min_y);
-Y_MAX = environment_max_y+0.1*(environment_max_y-environment_min_y);
+X_MIN = floor(environment_min_x-0.1*(environment_max_x-environment_min_x));
+X_MAX = floor(environment_max_x+0.1*(environment_max_x-environment_min_x));
+Y_MIN = floor(environment_min_y-0.1*(environment_max_y-environment_min_y));
+Y_MAX = floor(environment_max_y+0.1*(environment_max_y-environment_min_y));
 
 ENV_SIZE1 = floor(Y_MAX)+1;  % will be ENV_SIZE x ENV_SIZE grid
 ENV_SIZE2 = floor(X_MAX)+1;
@@ -24,13 +16,13 @@ ENV_SIZE2 = floor(X_MAX)+1;
 for x = floor(X_MIN)+1:floor(X_MAX)+1
     for y = floor(Y_MIN)+1:floor(Y_MAX)+1
         if in_environment( [x,y] , environment , epsilon )
-            Visibility_Data{100*y + x} = visibility_polygon( [x y] , environment , epsilon, snap_distance); 
-            Region{100*y + x} =  poly2mask(Resolution*Visibility_Data{100*y + x}(:,1),Resolution*Visibility_Data{100*y + x}(:,2),Resolution*ENV_SIZE1, Resolution*ENV_SIZE2);
+            Visibility_Data{X_MAX*y + x} = visibility_polygon( [x y] , environment , epsilon, snap_distance); 
+            Region{X_MAX*y + x} =  poly2mask(Resolution*Visibility_Data{X_MAX*y + x}(:,1),Resolution*Visibility_Data{X_MAX*y + x}(:,2),Resolution*ENV_SIZE1, Resolution*ENV_SIZE2);
         else
-            if 100*y + x <= 0
+            if X_MAX*y + x <= 0
                 continue
             end 
-            Visibility_Data{100*y + x} = -1; 
+            Visibility_Data{X_MAX*y + x} = -1; 
         end
     end
 end
@@ -46,13 +38,13 @@ end
 for x = floor(X_MIN)+1:floor(X_MAX)+1
     for y = floor(Y_MIN)+1:floor(Y_MAX)+1
         if in_environment( [x,y] , environment , epsilon )
-            Visibility_Data{100*y + x} = visibility_polygon( [x y] , environment , epsilon, snap_distance); 
-            Region{100*y + x} =  poly2mask(Resolution*Visibility_Data{100*y + x}(:,1),Resolution*Visibility_Data{100*y + x}(:,2),Resolution*ENV_SIZE1, Resolution*ENV_SIZE2);
+            Visibility_Data{X_MAX*y + x} = visibility_polygon( [x y] , environment , epsilon, snap_distance); 
+            Region{X_MAX*y + x} =  poly2mask(Resolution*Visibility_Data{X_MAX*y + x}(:,1),Resolution*Visibility_Data{X_MAX*y + x}(:,2),Resolution*ENV_SIZE1, Resolution*ENV_SIZE2);
         else
-            if 100*y + x <= 0
+            if X_MAX*y + x <= 0
                 continue
             end
-            Visibility_Data{100*y + x} = -1;
+            Visibility_Data{X_MAX*y + x} = -1;
         end
     end
 end
@@ -63,19 +55,19 @@ for i = 1:length(Asset(:,1))
     w{i} =  visibility_polygon( Asset(i,:) , environment , epsilon, snap_distance);
     for x = floor(X_MIN)+1:floor(X_MAX)+1
         for y = floor(Y_MIN)+1:floor(Y_MAX)+1
-            if 100*y + x <= 0
+            if X_MAX*y + x <= 0
                 continue
             end
             if in_environment( [x,y] , w , epsilon )
-                Asset_Visibility_Data(i,100*y + x) = 1;
+                Asset_Visibility_Data(i,X_MAX*y + x) = 1;
             else
-                Asset_Visibility_Data(i,100*y + x) = -1;
+                Asset_Visibility_Data(i,X_MAX*y + x) = -1;
             end
         end
     end
 end
 
-Visibility_in_environment = zeros(floor(X_MAX)+1 + 100* (floor(Y_MAX)+1), floor(X_MAX)+1 + 100* (floor(Y_MAX)+1));
+Visibility_in_environment = zeros(floor(X_MAX)+1 + X_MAX* (floor(Y_MAX)+1), floor(X_MAX)+1 + X_MAX* (floor(Y_MAX)+1));
 
 for x_location = floor(X_MIN)+1:floor(X_MAX)+1
     for y_location = floor(Y_MIN)+1:floor(Y_MAX)+1
@@ -85,8 +77,8 @@ for x_location = floor(X_MIN)+1:floor(X_MAX)+1
             for x_tosee = floor(X_MIN)+1:floor(X_MAX)+1
                 for y_tosee = floor(Y_MIN)+1:floor(Y_MAX)+1             
                     if in_environment( [x_tosee,y_tosee] , V , epsilon )
-                        x = x_location + 100*y_location;
-                        y = x_tosee + 100* y_tosee;
+                        x = x_location + X_MAX*y_location;
+                        y = x_tosee + X_MAX* y_tosee;
                         Visibility_in_environment(x,y) = 1;
                     end             
                 end
