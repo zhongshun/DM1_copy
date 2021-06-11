@@ -1,0 +1,58 @@
+//Environment Model
+//Outer Boundary x-y coordinates listed counterclockwise
+0.5	2.5
+13.5	2.5
+13.5	5.5
+3.5	5.5
+3.5 6.5
+4.5	6.5
+5.5	6.5
+7.5	6.5
+7.5	7.5
+5.5	7.5
+5.5	10.5
+7.5	10.5
+7.5	11.5
+5.5	11.5
+4.5	11.5
+0.5	11.5
+//Hole x-y coordinates listed clockwise
+0.5	7.5
+0.5	10.5
+2.5	10.5
+2.5	7.5
+//Hole x-y coordinates listed clockwise
+1.5	5.5
+1.5	6.5
+3.5	6.5
+3.5	5.5
+//Hole x-y coordinates listed clockwise
+3.5	7.5
+3.5	10.5
+5.5	10.5
+5.5	7.5
+//Hole x-y coordinates listed clockwise
+3.5	2.5
+3.5	4.5
+4.5	4.5
+4.5	2.5
+//Hole x-y coordinates listed clockwise
+5.5	2.5
+5.5	4.5
+6.5	4.5
+6.5	2.5
+//Hole x-y coordinates listed clockwise
+7.5	2.5
+7.5	4.5
+8.5	4.5
+8.5	2.5
+//Hole x-y coordinates listed clockwise
+9.5	2.5
+9.5	4.5
+10.5	4.5
+10.5	2.5
+//Hole x-y coordinates listed clockwise
+11.5	2.5
+11.5	4.5
+12.5	4.5
+12.5	2.5
