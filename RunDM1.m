@@ -39,18 +39,18 @@ for i = 2*Lookahead+1 : -1: 1
  
             E_them_temp = E_them;
             
-            Detection_Asset_Collect = One_Pass.Nodes.Detection_Asset_Collect{list(j)}; %indicator to label which asset is collected along the path to this node
+            Assets_Collected = One_Pass.Nodes.Assets_Collected{list(j)}; %indicator to label which asset is collected along the path to this node
             for Function_M = 0:Number_of_Function-1
                 E_them = E_them_temp;
                 %                 Function_M = dec2bin(M,Function_index_size);
-                %                 Detection_Asset_Collect = One_Pass.Nodes.Detection_Asset_Collect{list(j)};
+                %                 Assets_Collected = One_Pass.Nodes.Assets_Collected{list(j)};
                 Index = Function_M;
                 for N = Function_index_size:-1:1
                     %                     if bitand(Function_M, bitset(0,length(Asset_Position) - N + 1))
                     %                     if   mod(bitshift(Function_M,-(length(Asset_Position) - N + 1)),2)
                     if  mod(Index,2)
-                        E_them = E_them - (Discount_factor^Detection_Asset_Collect(N))...
-                            * (Detection_Asset_Collect(N)>0) * (Negtive_Asset);
+                        E_them = E_them - (Discount_factor^Assets_Collected(N))...
+                            * (Assets_Collected(N)>0) * (Negtive_Asset);
                     end
                     Index = floor(Index/2);
                 end
@@ -73,13 +73,13 @@ for i = 2*Lookahead+1 : -1: 1
             %Find which function we need to use based on the wise up state
             %of the opponent
             Decision_Index_E_them = 0;
-            M = length(One_Pass.Nodes.Detection_Asset_WiseUp_Index{list(j)});
+            M = length(One_Pass.Nodes.Assets_Detected{list(j)});
             for CheckBit = 1:M
-                if One_Pass.Nodes.Detection_Asset_WiseUp_Index{list(j)}(CheckBit) == 1
+                if One_Pass.Nodes.Assets_Detected{list(j)}(CheckBit) == 1
                     Decision_Index_E_them = bitset(Decision_Index_E_them,M - CheckBit + 1);
                 end
             end
-            %             Decision_Index_E_them = bin2dec(num2str(One_Pass.Nodes.Detection_Asset_WiseUp_Index{list(j)}'))+1;
+            %             Decision_Index_E_them = bin2dec(num2str(One_Pass.Nodes.Assets_Detected{list(j)}'))+1;
             Decision_Index_E_them = Decision_Index_E_them + 1;
             
             
@@ -107,21 +107,20 @@ for i = 2*Lookahead+1 : -1: 1
             Best_node = Best_nodes(1);
             P = list(j);
             
-            for k = 1:nnz(Best_nodes)
-                if One_Pass.Nodes.Opponent{P}(1) == One_Pass.Nodes.Opponent{Best_nodes(k)}(1) &&...
-                        One_Pass.Nodes.Opponent{P}(2) == One_Pass.Nodes.Opponent{Best_nodes(k)}(2)
-                    Best_node = Best_nodes(k);
-                    break
-                end
-            end
-%             distance()
 %             for k = 1:nnz(Best_nodes)
-%                 if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) < ...
-%                         norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
+%                 if One_Pass.Nodes.Opponent{P}(1) == One_Pass.Nodes.Opponent{Best_nodes(k)}(1) &&...
+%                         One_Pass.Nodes.Opponent{P}(2) == One_Pass.Nodes.Opponent{Best_nodes(k)}(2)
 %                     Best_node = Best_nodes(k);
-% %                     break
+%                     break
 %                 end
 %             end
+            for k = 1:nnz(Best_nodes)
+                if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) < ...
+                        norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
+                    Best_node = Best_nodes(k);
+%                     break
+                end
+            end
             
             
             
@@ -156,20 +155,20 @@ for i = 2*Lookahead+1 : -1: 1
             Best_node = Best_nodes(1);
             P = list(j);
 
-            for k = 1:nnz(Best_nodes)
-                if One_Pass.Nodes.Agent{P}(1) == One_Pass.Nodes.Agent{Best_nodes(k)}(1) &&...
-                        One_Pass.Nodes.Agent{P}(2) == One_Pass.Nodes.Agent{Best_nodes(k)}(2)
-                    Best_node = Best_nodes(k);
-                    break
-                end
-            end
 %             for k = 1:nnz(Best_nodes)
-%                 if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) > ...
-%                         norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
+%                 if One_Pass.Nodes.Agent{P}(1) == One_Pass.Nodes.Agent{Best_nodes(k)}(1) &&...
+%                         One_Pass.Nodes.Agent{P}(2) == One_Pass.Nodes.Agent{Best_nodes(k)}(2)
 %                     Best_node = Best_nodes(k);
-% %                     break
+%                     break
 %                 end
 %             end
+            for k = 1:nnz(Best_nodes)
+                if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) > ...
+                        norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
+                    Best_node = Best_nodes(k);
+%                     break
+                end
+            end
 
 
             
@@ -227,7 +226,7 @@ Initial_Agent_Region = One_Pass.Nodes.Agent_Region{One_Pass_Node_path(3)};
 Initial_Agent = [Agent_path_x(2);Agent_path_y(2)];
 Initial_Opponent = [Opponent_path_x(2);Opponent_path_y(2)];
 
-Assets_Collected = One_Pass.Nodes.Detection_Asset_Collect{One_Pass_Node_path(3)};
+Assets_Collected = One_Pass.Nodes.Assets_Collected{One_Pass_Node_path(3)};
 save('Save_Visibility_Data\Show_Tree.mat');
 Plot_Path_Online_DM1;
 end

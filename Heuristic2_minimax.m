@@ -45,7 +45,7 @@ end
 Penalty_Opponent = 0;
 
 D = Precompute_Path{X_max*Postions(2,k)+Postions(1,k),X_max*Initial_Opponent(2)+Initial_Opponent(1)};
-Penalty_Opponent = Penalty_Opponent +  50*Negtive_Reward*PDF(length(D(1,:)));
+Penalty_Opponent = Penalty_Opponent +  150*Negtive_Reward*PDF(length(D(1,:)));
 
 
 %Compute the negative reward of the asset

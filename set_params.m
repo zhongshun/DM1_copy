@@ -11,7 +11,9 @@ Negtive_Asset = 30;     % penalty for asset being detected
 Lookahead = 5;          % planning horizon        
 
 T_execution = 10;       % episode duration
-Discount_factor = 0.95;
+Discount_factor = 0.93;
 
-heur_penalty_std = 9;        % std of penalty to use for the heuristic
-heur_agent_detection_weight = 50;   % how much weight to give the opponent detecting the agent penalty in the heuristic
+heur_penalty_std = 1;        % std of penalty to use for the heuristic
+heur_agent_detection_weight = 0.01;   % how much weight to give the opponent detecting the agent penalty in the heuristic
+
+heur_agent_explore_weight = 2;   % how much weight to give the opponent detecting the agent penalty in the heuristic

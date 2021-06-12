@@ -10,8 +10,8 @@ X_MAX = floor(environment_max_x+0.1*(environment_max_x-environment_min_x));
 Y_MIN = floor(environment_min_y-0.1*(environment_max_y-environment_min_y));
 Y_MAX = floor(environment_max_y+0.1*(environment_max_y-environment_min_y));
 
-ENV_SIZE1 = floor(Y_MAX)+1;  % will be ENV_SIZE x ENV_SIZE grid
-ENV_SIZE2 = floor(X_MAX)+1;
+ENV_SIZE1 = floor(X_MAX)+1;  % will be ENV_SIZE x ENV_SIZE grid
+ENV_SIZE2 = floor(Y_MAX)+1;
 
 for x = floor(X_MIN)+1:floor(X_MAX)+1
     for y = floor(Y_MIN)+1:floor(Y_MAX)+1

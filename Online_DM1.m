@@ -25,7 +25,7 @@ Record_path_Opponent = Initial_Opponent;
 Assets_Collected = zeros(Number_of_Asset,1);
 
 V{1} = visibility_polygon( [Initial_Agent(1) Initial_Agent(2)] , environment , epsilon, snap_distance);
-Initial_Agent_Region = poly2mask(Resolution*V{1}(:,1),Resolution*V{1}(:,2),Resolution*ENV_SIZE1, Resolution*ENV_SIZE2);
+Initial_Agent_Region = poly2mask(Resolution*V{1}(:,1),Resolution*V{1}(:,2),Resolution*(ENV_SIZE1), Resolution*(ENV_SIZE2));
 
 Number_of_Function = 0;
 for i = 0:Number_of_Asset
