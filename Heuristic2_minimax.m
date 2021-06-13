@@ -51,7 +51,7 @@ Penalty_Opponent = Penalty_Opponent +  150*Negtive_Reward*PDF(length(D(1,:)));
 %Compute the negative reward of the asset
 Penalty_Asset = 0;
 for k = 1:length(Postions(1,:))
-    for L = 1:length(Assets(1,:))
+    for L = 1:length(Assets(:,1))
         if Assets_Collect(L) == 1 || WiseUp_Index(L) == 0
             continue;
         end

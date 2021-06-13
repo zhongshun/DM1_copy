@@ -61,7 +61,7 @@ for step = 1:T_execution
     
     %% Run the Minimax
     [Initial_Agent1,Initial_Opponent_update,Initial_Agent_Region_opponent,Assets_Collected] = ...
-        RunMinimax(Tree_Opponent,T,Asset,Negtive_Reward,Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,Visibility_in_environment,step,Discount_factor,environment,Precompute_Path,Assets_Detected);
+        RunMinimax(Tree_Opponent,Lookahead,Asset,Negtive_Reward,Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,Visibility_in_environment,step,Discount_factor,environment,Precompute_Path,Assets_Detected);
     clear Tree_Opponent;
 
     %% Record the action for next step, also record the assets collected realdy
@@ -72,7 +72,7 @@ for step = 1:T_execution
     Initial_Agent_Region = Initial_Agent_Region_update;
     Assets_Collected = Assets_Collected;
     
-    W{1} = Visibility_Data{Initial_Opponent(1) +100* Initial_Opponent(2)};
+    W{1} = Visibility_Data{Initial_Opponent(1) +X_MAX* Initial_Opponent(2)};
     for N = 1:Number_of_Asset
         if in_environment( [Asset(N,1) Asset(N,2)] , W , epsilon )
             Assets_Detected(N) = 1;

@@ -108,7 +108,7 @@ for i = 2*Lookahead+1 : -1: 1
             P = list(j);
             
             %The Opponent chose to stay if staying is among one of the
-            %optimal actions of its child nodes.
+            %optimal actions of i
             
 %             for k = 1:nnz(Best_nodes)
 %                 if One_Pass.Nodes.Opponent{P}(1) == One_Pass.Nodes.Opponent{Best_nodes(k)}(1) &&...
@@ -117,13 +117,6 @@ for i = 2*Lookahead+1 : -1: 1
 %                     break
 %                 end
 %             end
-
-
-            %Test the effect of moving toward the agent when tie-breaking,
-            %because chose the appropriate heuristic weight for the opponent detection
-            %part is not very straightforward, could make some strange
-            %behaviors for the agent or the opponent.
-
             for k = 1:nnz(Best_nodes)
                 if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) < ...
                         norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
@@ -165,10 +158,6 @@ for i = 2*Lookahead+1 : -1: 1
             Best_node = Best_nodes(1);
             P = list(j);
 
-            
-            %The agent chose to stay if staying is among one of the
-            %optimal actions of its child nodes.
-            
 %             for k = 1:nnz(Best_nodes)
 %                 if One_Pass.Nodes.Agent{P}(1) == One_Pass.Nodes.Agent{Best_nodes(k)}(1) &&...
 %                         One_Pass.Nodes.Agent{P}(2) == One_Pass.Nodes.Agent{Best_nodes(k)}(2)
@@ -176,11 +165,6 @@ for i = 2*Lookahead+1 : -1: 1
 %                     break
 %                 end
 %             end
-
-            %Test the effect of moving away from the opponent when tie-breaking,
-            %because chose the appropriate heuristic weight for the opponent detection
-            %part is not very straightforward, could make some strange
-            %behaviors for the agent or the opponent.
             for k = 1:nnz(Best_nodes)
                 if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) > ...
                         norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})

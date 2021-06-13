@@ -22,7 +22,7 @@ for i = 2*T+1 :-1:1
             %   List all the reward value based on the detection of one
             %   of the assests or not
             Reward_visbility = Heuristic2_minimax(Minimax_Pass.Nodes.Agent{list(j)}, Minimax_Pass.Nodes.Opponent{list(j)}, Minimax_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
-                Negtive_Asset,Asset_Position,One_Pass.Nodes.Detection_Asset_Collect{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index);
+                Negtive_Asset,Asset_Position,Minimax_Pass.Nodes.Detection_Asset_Collect{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index);
             
             E_them =  Minimax_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + Reward_visbility;
             Detection_Asset_Collect = Minimax_Pass.Nodes.Detection_Asset_Collect{list(j)};
