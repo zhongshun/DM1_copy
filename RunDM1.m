@@ -1,5 +1,5 @@
 function [Initial_Agent,Initial_Opponent,Initial_Agent_Region,Assets_Collected] = RunDM1(One_Pass,Lookahead,Asset_Position,Negtive_Reward,...
-    Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,step,Discount_factor,environment,Precompute_Path,WiseUp_Index,heur_penalty_std,heur_agent_detection_weight,epsilon)
+    Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,step,Discount_factor,environment,Precompute_Path,WiseUp_Index,heur_penalty_std,heur_agent_detection_weight,heur_agent_asset_weight,epsilon,USE_HEURISTIC)
 
 
 %% For the heuristic
@@ -31,23 +31,25 @@ for i = 2*Lookahead+1 : -1: 1
             
             %   List all the reward value based on the detection of one
             %   of the assests or not
-            Reward_visbility = Heuristic2(One_Pass.Nodes.Agent{list(j)}, One_Pass.Nodes.Opponent{list(j)}, One_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
-                Negtive_Asset,Asset_Position,One_Pass.Nodes.Assets_Collected{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index,heur_agent_detection_weight,epsilon);
             
-            E_them =  One_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + Reward_visbility;
-            %             One_Pass.Nodes.E_them{list(j)} = E_them;
+            if USE_HEURISTIC
+                heuristic_val = Heuristic2(One_Pass.Nodes.Agent{list(j)}, One_Pass.Nodes.Opponent{list(j)}, One_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
+                    Negtive_Asset,Asset_Position,One_Pass.Nodes.Assets_Collected{list(j)},environment,Precompute_Path,PDF_Gaussian,ones(size(WiseUp_Index)),heur_agent_detection_weight,heur_agent_asset_weight,Visibility_Data);
+            else
+                heuristic_val = 0;
+            end
+                        
+            % minimal evaluation function
+            E_them =  One_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + heuristic_val;
  
             E_them_temp = E_them;
             
             Assets_Collected = One_Pass.Nodes.Assets_Collected{list(j)}; %indicator to label which asset is collected along the path to this node
+            
             for Function_M = 0:Number_of_Function-1
                 E_them = E_them_temp;
-                %                 Function_M = dec2bin(M,Function_index_size);
-                %                 Assets_Collected = One_Pass.Nodes.Assets_Collected{list(j)};
                 Index = Function_M;
                 for N = Function_index_size:-1:1
-                    %                     if bitand(Function_M, bitset(0,length(Asset_Position) - N + 1))
-                    %                     if   mod(bitshift(Function_M,-(length(Asset_Position) - N + 1)),2)
                     if  mod(Index,2)
                         E_them = E_them - (Discount_factor^Assets_Collected(N))...
                             * (Assets_Collected(N)>0) * (Negtive_Asset);
@@ -110,27 +112,27 @@ for i = 2*Lookahead+1 : -1: 1
             %The Opponent chose to stay if staying is among one of the
             %optimal actions of its child nodes.
             
-%             for k = 1:nnz(Best_nodes)
-%                 if One_Pass.Nodes.Opponent{P}(1) == One_Pass.Nodes.Opponent{Best_nodes(k)}(1) &&...
-%                         One_Pass.Nodes.Opponent{P}(2) == One_Pass.Nodes.Opponent{Best_nodes(k)}(2)
-%                     Best_node = Best_nodes(k);
-%                     break
-%                 end
-%             end
+            for k = 1:nnz(Best_nodes)
+                if One_Pass.Nodes.Opponent{P}(1) == One_Pass.Nodes.Opponent{Best_nodes(k)}(1) &&...
+                        One_Pass.Nodes.Opponent{P}(2) == One_Pass.Nodes.Opponent{Best_nodes(k)}(2)
+                    Best_node = Best_nodes(k);
+                    break
+                end
+            end
 
 
             %Test the effect of moving toward the agent when tie-breaking,
             %because chose the appropriate heuristic weight for the opponent detection
             %part is not very straightforward, could make some strange
-            %behaviors for the agent or the opponent.
-
-            for k = 1:nnz(Best_nodes)
-                if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) < ...
-                        norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
-                    Best_node = Best_nodes(k);
-%                     break
-                end
-            end
+%             %behaviors for the agent or the opponent.
+% 
+%             for k = 1:nnz(Best_nodes)
+%                 if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) < ...
+%                         norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
+%                     Best_node = Best_nodes(k);
+% %                     break
+%                 end
+%             end
             
             
             
@@ -169,25 +171,25 @@ for i = 2*Lookahead+1 : -1: 1
             %The agent chose to stay if staying is among one of the
             %optimal actions of its child nodes.
             
-%             for k = 1:nnz(Best_nodes)
-%                 if One_Pass.Nodes.Agent{P}(1) == One_Pass.Nodes.Agent{Best_nodes(k)}(1) &&...
-%                         One_Pass.Nodes.Agent{P}(2) == One_Pass.Nodes.Agent{Best_nodes(k)}(2)
-%                     Best_node = Best_nodes(k);
-%                     break
-%                 end
-%             end
+            for k = 1:nnz(Best_nodes)
+                if One_Pass.Nodes.Agent{P}(1) == One_Pass.Nodes.Agent{Best_nodes(k)}(1) &&...
+                        One_Pass.Nodes.Agent{P}(2) == One_Pass.Nodes.Agent{Best_nodes(k)}(2)
+                    Best_node = Best_nodes(k);
+                    break
+                end
+            end
 
             %Test the effect of moving away from the opponent when tie-breaking,
             %because chose the appropriate heuristic weight for the opponent detection
             %part is not very straightforward, could make some strange
             %behaviors for the agent or the opponent.
-            for k = 1:nnz(Best_nodes)
-                if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) > ...
-                        norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
-                    Best_node = Best_nodes(k);
-%                     break
-                end
-            end
+%             for k = 1:nnz(Best_nodes)
+%                 if norm(One_Pass.Nodes.Opponent{Best_nodes(k)}-One_Pass.Nodes.Agent{Best_nodes(k)}) > ...
+%                         norm(One_Pass.Nodes.Opponent{Best_node}-One_Pass.Nodes.Agent{Best_node})
+%                     Best_node = Best_nodes(k);
+% %                     break
+%                 end
+%             end
 
 
             
@@ -204,16 +206,16 @@ for i = 2*Lookahead+1 : -1: 1
             %                 end
             %            end
             
-            E_them = One_Pass.Nodes.E_them{Children_node(1)};
+            E0 = One_Pass.Nodes.E_them{Children_node(1)};
             
             for k = 1:nnz(Children_node)
                 One_Pass_Nodes_E_them_temp = One_Pass.Nodes.E_them{Children_node(k)};
                 for M = 1:Number_of_Function
-                    E_them(M) = max(E_them(M),One_Pass_Nodes_E_them_temp(M));
+                    E0(M) = max(E0(M),One_Pass_Nodes_E_them_temp(M));
                 end
             end
             
-            One_Pass.Nodes.E_them{list(j)} = E_them;
+            One_Pass.Nodes.E_them{list(j)} = E0;
             
         end
     end

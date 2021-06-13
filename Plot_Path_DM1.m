@@ -39,10 +39,10 @@ sensor_y =  Record_path_Opponent(2,:);
 
 
 
-Teammate = Asset; 
+Teammate = Assets; 
 Teammate_detected = zeros(1,5);
 TeammatePenalty = Negtive_Asset;
-Teammate_detected = zeros(size(Asset,1),1);
+Teammate_detected = zeros(size(Assets,1),1);
 
 Updated_Negtive_Reward = Negtive_Reward;
 
@@ -68,8 +68,8 @@ else
     sensor_detect_indicator(1)= 0;
 end
 
-for k = 1:size(Asset,1)
-    plot3(Asset(k,1),Asset(k,2), 0.3 , ...
+for k = 1:size(Assets,1)
+    plot3(Assets(k,1),Assets(k,2), 0.3 , ...
         'p' , 'Markersize' , 16, 'MarkerFaceColor' , [0.9,0.8,0.7],'MarkerFaceColor','r','MarkerEdgeColor','r' );
 end
 
@@ -144,16 +144,16 @@ for ii= 1: max(size(current_x))
         
         hold on
         
-        for k = 1:size(Asset,1)
-            if sensor_x(ii) == Asset(k,1) && sensor_y(ii) ==  Asset(k,2)
+        for k = 1:size(Assets,1)
+            if sensor_x(ii) == Assets(k,1) && sensor_y(ii) ==  Assets(k,2)
                 Teammate_detected(k) = 1;
                 CurrentPenalty = 1;
             end
         end
 
-        for k = 1:size(Asset,1)
+        for k = 1:size(Assets,1)
             if Teammate_detected(k) == 0
-                plot3(Asset(k,1),Asset(k,2), 0.3 , ...
+                plot3(Assets(k,1),Assets(k,2), 0.3 , ...
                     'p' , 'Markersize' , 16, 'MarkerFaceColor' , [0.9,0.8,0.7],'MarkerFaceColor','r','MarkerEdgeColor','r' );
             end
         end

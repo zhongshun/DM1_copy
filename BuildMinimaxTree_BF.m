@@ -1,6 +1,6 @@
 function Vis = BuildMinimaxTree_BF(Initial_Agent,Initial_Opponent,Initial_Agent_Region,Asset,Detection_Asset_Collect,environment,...
                                     Lookahead,Negtive_Reward,Negtive_Asset,Visibility_Data,Region,WiseUp_Index,Asset_Visibility_Data,...
-                                    Visibility_in_environment,step,Resolution ,Discount_factor)
+                                    Visibility_in_environment,step,Resolution ,Discount_factor,epsilon)
                                 
 environment_min_x = min(environment{1}(:,1));
 environment_max_x = max(environment{1}(:,1));
@@ -13,25 +13,15 @@ Y_MAX = floor(environment_max_y+0.1*(environment_max_y-environment_min_y));
                                 
 
 Number_of_Asset = size(Asset,1);
-epsilon = 0.001;
-snap_distance = 0.05;
 % Discount_factor = 1;
 
 
-% Vis = digraph([1],[]);
 Vis.Nodes.Agent{1}= Initial_Agent;
-% Vis.Nodes.Agent_y= Initial_Agent(2);
 Vis.Nodes.Opponent{1}=Initial_Opponent;
-% Vis.Nodes.Opponent_y=Initial_Opponent(2);
 Vis.Nodes.Generation = 1;
-
 Vis.Nodes.Successors{1} = [];
 
-%Each point will only be panelized for once
 Vis.Nodes.panelized{1}(X_MAX,Y_MAX) = 0;
-
-% Vis.Nodes.Visited_Time = 1;
-% Vis.Nodes.Detection_Asset_WiseUp_Index{1} = num2str(zeros(Number_of_Asset,1));
 Vis.Nodes.Detection_Asset_WiseUp_Index{1} = WiseUp_Index;
 
 Vis.Nodes.Detection_Asset_Collect{1} = Detection_Asset_Collect;
@@ -61,21 +51,15 @@ for N = 1:Number_of_Asset
 end
 
 
-T = Lookahead;
 New_Initial = 1;
 New_End = 1;
 Count = 1;
 
 
-% environment_min_x = min(environment{1}(:,1));
-% environment_max_x = max(environment{1}(:,1));
-% environment_min_y = min(environment{1}(:,2));
-% environment_max_y = max(environment{1}(:,2));
-
 Action_Space = [1 0;0 1;-1 0; 0 -1;0 0];
 
 %% Start to build the search tree using breadth first expand
-for i = 2:2*T+1
+for i = 2:2*Lookahead+1
 %     Current_step = ceil(i/2);
 %     Negtive_Reward = (0.99^(i-1))*Negtive_Reward;
 %     Negtive_Asset = (0.99^(i-1))*Negtive_Asset;

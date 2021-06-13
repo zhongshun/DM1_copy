@@ -1,16 +1,23 @@
 function [Initial_Agent,Initial_Opponent,Initial_Agent_Region,Assets_Collected] = RunMinimax(Minimax_Pass,T,Asset_Position,Negtive_Reward,...
     Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,Visibility_in_environmentstep,step,Discount_factor,...
-    environment,Precompute_Path,WiseUp_Index)
+    environment,Precompute_Path,WiseUp_Index,heur_penalty_std,heur_agent_detection_weight,heur_agent_asset_weight,epsilon,USE_HEURISTIC)
 
-% RunDM1(Tree,T,Asset,Negtive_Reward,Negtive_Asset,Number_of_Function,Function_index_size,
-% Visibility_Data,Region,Asset_Visibility_Data,step)
 
-epsilon = 0.0001;
-% Discount_factor = 1;
-pd = makedist('Normal','mu',0,'sigma',9);
-x = 1:50;
-% PDF_Gaussian = pdf(pd,x);
-PDF_Gaussian = 1./(10+x);
+%% For the heuristic
+environment_min_x = min(environment{1}(:,1));
+environment_max_x = max(environment{1}(:,1));
+environment_min_y = min(environment{1}(:,2));
+environment_max_y = max(environment{1}(:,2));
+X_MIN = environment_min_x-0.1*(environment_max_x-environment_min_x);
+X_MAX = environment_max_x+0.1*(environment_max_x-environment_min_x);
+Y_MIN = environment_min_y-0.1*(environment_max_y-environment_min_y);
+Y_MAX = environment_max_y+0.1*(environment_max_y-environment_min_y); 
+
+pd = makedist('Normal','mu',0,'sigma',heur_penalty_std);
+x = 1:floor(X_MAX+Y_MAX);
+PDF_Gaussian = pdf(pd,x);
+
+%%
 
 for i = 2*T+1 :-1:1
     list =  find(Minimax_Pass.Nodes.Generation == i);
@@ -21,10 +28,15 @@ for i = 2*T+1 :-1:1
         for j=1:nnz(list)
             %   List all the reward value based on the detection of one
             %   of the assests or not
-            Reward_visbility = Heuristic2_minimax(Minimax_Pass.Nodes.Agent{list(j)}, Minimax_Pass.Nodes.Opponent{list(j)}, Minimax_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
-                Negtive_Asset,Asset_Position,Minimax_Pass.Nodes.Detection_Asset_Collect{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index);
             
-            E_them =  Minimax_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + Reward_visbility;
+            if USE_HEURISTIC
+                heuristic_val = Heuristic2(Minimax_Pass.Nodes.Agent{list(j)}, Minimax_Pass.Nodes.Opponent{list(j)}, Minimax_Pass.Nodes.Agent_Region(list(j)),Negtive_Reward,...
+                    Negtive_Asset,Asset_Position,Minimax_Pass.Nodes.Detection_Asset_Collect{list(j)},environment,Precompute_Path,PDF_Gaussian,WiseUp_Index,heur_agent_detection_weight,heur_agent_asset_weight,Visibility_Data);
+            else
+                heuristic_val = 0;
+            end
+            
+            E_them =  Minimax_Pass.Nodes.Current_Step_reward_wo_assets(list(j)) + heuristic_val;
             Detection_Asset_Collect = Minimax_Pass.Nodes.Detection_Asset_Collect{list(j)};
             for N = Function_index_size:-1:1
                 E_them = E_them - (Discount_factor^Detection_Asset_Collect(N))...
