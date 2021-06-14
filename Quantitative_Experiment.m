@@ -27,7 +27,7 @@ for experiment_i = 1:Number_of_Experiments
     for k = 1:Number_of_Assets
         while true
             Asset(k,:) = [randi([X_MIN,X_MAX]) randi([Y_MIN,Y_MAX])];
-            if in_environment( [Initial_Opponent(1),Initial_Opponent(2)] , environment , epsilon )...
+            if in_environment( [Asset(k,1),Asset(k,2)] , environment , epsilon )...
                     && ~in_environment( [Asset(k,1),Asset(k,2)] , W , epsilon )
                 break;
             end

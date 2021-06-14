@@ -51,8 +51,8 @@ end
 
 
 
-for i = 1:length(Assets(:,1))
-    w{i} =  visibility_polygon( Assets(i,:) , environment , epsilon, snap_distance);
+for i = 1:length(Asset(:,1))
+    w{i} =  visibility_polygon( Asset(i,:) , environment , epsilon, snap_distance);
     for x = floor(X_MIN)+1:floor(X_MAX)+1
         for y = floor(Y_MIN)+1:floor(Y_MAX)+1
             if X_MAX*y + x <= 0
