@@ -57,6 +57,7 @@ for experiment_i = 1:Number_of_Experiments
     
     
     %% Run the episode
+    T = Lookahead;
     for step = 1:T_execution
         
         %% Build the tree
@@ -100,7 +101,7 @@ for experiment_i = 1:Number_of_Experiments
         end
         
     end
-    
+    Lookahead = T;
     %%
     fname = sprintf('save_data/DM1_experiment%d.mat', experiment_i);
     save(fname)

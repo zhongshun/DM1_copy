@@ -4,17 +4,17 @@ snap_distance = 0.05;   %Snap distance (distance within which an observer locati
                         
 Number_of_Assets = 1;     
 
-Number_of_Experiments = 1;
+Number_of_Experiments = 10;
 
 Resolution = 1;         % 1 is a coarse grid used for computing visibility
 
 Negtive_Reward = 0.3;   % penalty for agent being detected
 Negtive_Asset = 30;     % penalty for asset being detected
 
-Lookahead = 5;          % planning horizon        
+Lookahead = 9;          % planning horizon        
 
-T_execution = 10;       % episode duration
-Discount_factor = 0.93;
+T_execution = Lookahead;       % episode duration
+Discount_factor = 0.95;
 
 USE_HEURISTIC = false;         
 heur_penalty_std = 1;        % std of penalty to use for the heuristic

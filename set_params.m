@@ -11,10 +11,10 @@ Resolution = 1;         % 1 is a coarse grid used for computing visibility
 Negtive_Reward = 0.3;   % penalty for agent being detected
 Negtive_Asset = 30;     % penalty for asset being detected
 
-Lookahead = 9;          % planning horizon        
+Lookahead = 7;          % planning horizon        
 
 T_execution = Lookahead;       % episode duration
-Discount_factor = 0.93;
+Discount_factor = 0.95;
 
 USE_HEURISTIC = false;         
 heur_penalty_std = 1;        % std of penalty to use for the heuristic
