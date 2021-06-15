@@ -1,5 +1,6 @@
 function [Initial_Agent,Initial_Opponent,Initial_Agent_Region,Assets_Collected] = RunDM1(One_Pass,Lookahead,Asset_Position,Negtive_Reward,...
-    Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,step,Discount_factor,environment,Precompute_Path,WiseUp_Index,heur_penalty_std,heur_agent_detection_weight,heur_agent_asset_weight,epsilon,USE_HEURISTIC)
+    Negtive_Asset,Number_of_Function,Function_index_size,Visibility_Data,Region,Asset_Visibility_Data,step,Discount_factor,environment,...
+    Precompute_Path,WiseUp_Index,heur_penalty_std,heur_agent_detection_weight,heur_agent_asset_weight,epsilon,USE_HEURISTIC)
 
 
 %% For the heuristic
@@ -112,6 +113,9 @@ for i = 2*Lookahead+1 : -1: 1
             %The Opponent chose to stay if staying is among one of the
             %optimal actions of its child nodes.
             
+            if nnz(Best_nodes)> 1
+                a = 1;
+            end
             for k = 1:nnz(Best_nodes)
                 if One_Pass.Nodes.Opponent{P}(1) == One_Pass.Nodes.Opponent{Best_nodes(k)}(1) &&...
                         One_Pass.Nodes.Opponent{P}(2) == One_Pass.Nodes.Opponent{Best_nodes(k)}(2)
