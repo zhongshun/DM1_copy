@@ -3,37 +3,52 @@ clc;
 %% Create environment
 
 set_params_quantitative; % set all parameters in this file
+USE_BaselineMinimax = false; %Use DM1, set the paprameter as "false". To compare with baseline minimax, use "true".
 
 %% For loop for experiments
 for experiment_i = 1:Number_of_Experiments
     %% Initialization
-    % Generate the location of the agent.
-    while true
-        Initial_Agent = [randi([X_MIN,X_MAX]); randi([Y_MIN,Y_MAX])];
-        if in_environment( [Initial_Agent(1),Initial_Agent(2)] , environment , epsilon )
-            break;
-        end
-    end
-    % Generate the location of the opponent.
-    while true
-        Initial_Opponent = [randi([X_MIN,X_MAX]); randi([Y_MIN,Y_MAX])];
-        if in_environment( [Initial_Opponent(1),Initial_Opponent(2)] , environment , epsilon )
-            break;
-        end
-    end
-    
-    % Generate the location of all the assets.
-    W{1} = visibility_polygon( Initial_Opponent , environment , epsilon, snap_distance);
-    for k = 1:Number_of_Assets
+    if ~USE_BaselineMinimax
+        % Generate the location of the agent.
         while true
-            Assets(k,:) = [randi([X_MIN,X_MAX]) randi([Y_MIN,Y_MAX])];
-            if in_environment( [Assets(k,1),Assets(k,2)] , environment , epsilon )...
-                    && ~in_environment( [Assets(k,1),Assets(k,2)] , W , epsilon )
+            Initial_Agent = [randi([X_MIN,X_MAX]); randi([Y_MIN,Y_MAX])];
+            if in_environment( [Initial_Agent(1),Initial_Agent(2)] , environment , epsilon )
                 break;
             end
         end
+        Record_Initial_Agent{experiment_i} = Initial_Agent;
+        % Generate the location of the opponent.
+        while true
+            Initial_Opponent = [randi([X_MIN,X_MAX]); randi([Y_MIN,Y_MAX])];
+            if in_environment( [Initial_Opponent(1),Initial_Opponent(2)] , environment , epsilon ) 
+                break;
+            end
+        end
+        Record_Initial_Opponent{experiment_i} = Initial_Opponent;
+        
+        % Generate the location of all the assets.
+        W{1} = visibility_polygon( Initial_Opponent , environment , epsilon, snap_distance);
+        for k = 1:Number_of_Assets
+            while true
+                Assets(k,:) = [randi([X_MIN,X_MAX]) randi([Y_MIN,Y_MAX])];
+                if in_environment( [Assets(k,1),Assets(k,2)] , environment , epsilon )...
+                        && ~in_environment( [Assets(k,1),Assets(k,2)] , W , epsilon )
+                    break;
+                end
+            end
+        end
+        Record_Assets{experiment_i} = Assets;
+    else
+        load('save_data/Initial_Positions.mat');
+        USE_BaselineMinimax = true;
+        Initial_Agent = Record_Initial_Agent{experiment_i};
+        Initial_Opponent = Record_Initial_Opponent{experiment_i};
+        Assets = Record_Assets{experiment_i};
     end
-    
+    if ~USE_BaselineMinimax
+        fname = sprintf('save_data/Initial_Positions.mat');
+        save(fname, 'Record_Initial_Agent','Record_Initial_Opponent','Record_Assets');
+    end
     %% Create environment
     
     Creat_Environment_Visbility_Data;
@@ -53,8 +68,11 @@ for experiment_i = 1:Number_of_Experiments
     end
     Function_index = dec2bin(Number_of_Function-1);
     Function_index_size = size(Function_index,2);
-    Assets_Detected = zeros(Number_of_Assets,1);
-    
+    if USE_BaselineMinimax
+        Assets_Detected = ones(Number_of_Assets,1);
+    else
+        Assets_Detected = zeros(Number_of_Assets,1);
+    end
     
     %% Run the episode
     T = Lookahead;
@@ -103,8 +121,13 @@ for experiment_i = 1:Number_of_Experiments
     end
     Lookahead = T;
     %%
-    fname = sprintf('save_data/DM1_experiment%d.mat', experiment_i);
-    save(fname)
+    if USE_BaselineMinimax
+        fname = sprintf('save_data/BaselineMinimax_experiment%d.mat', experiment_i);
+        save(fname)
+    else
+        fname = sprintf('save_data/DM1_experiment%d.mat', experiment_i);
+        save(fname)
+    end
 end
 %%
-Plot_Path_DM1
+% Plot_Path_DM1
