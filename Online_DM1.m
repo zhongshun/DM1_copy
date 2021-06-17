@@ -9,10 +9,11 @@ environment = read_vertices_from_file(env_file);
 
 % Asset = [9 6;9 4];
 Assets = [5 1];
+% Assets = [5 3];
 Number_of_Assets = size(Assets,1);
 
 Initial_Agent = [5;3];%[8;5];
-Initial_Opponent = [7;3];%[7;5];
+Initial_Opponent = [5;3];%[7;5];
 
 Creat_Environment_Visbility_Data
 
