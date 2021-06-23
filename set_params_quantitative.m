@@ -23,7 +23,8 @@ heur_penalty_std = 1;        % std of penalty to use for the heuristic
 heur_agent_asset_weight = 1;            % how much weight to give the asset penalty in the heuristic
 heur_agent_detection_weight = 1;     % how much weight to give the opponent detecting the agent penalty in the heuristic
 
-environment = read_vertices_from_file('./Environments/Env_A.environment');  %The environment and its boundary
+environment_name = 'Env_A';
+environment = read_vertices_from_file(sprintf('./Environments/%s.environment',environment_name));  %The environment and its boundary
 environment_min_x = min(environment{1}(:,1));
 environment_max_x = max(environment{1}(:,1));
 environment_min_y = min(environment{1}(:,2));
