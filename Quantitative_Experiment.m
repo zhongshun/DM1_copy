@@ -135,10 +135,10 @@ for experiment_i = 1:Number_of_Experiments
     Lookahead = T;
     %%
     if USE_BaselineMinimax
-        fname = sprintf('save_data/BaselineMinimax_experiment%d.mat', experiment_i);
+        fname = sprintf('save_data/%s/BaselineMinimax_experiment%d.mat', environment_name, experiment_i);
         save(fname)
     else
-        fname = sprintf('save_data/DM1_experiment%d.mat', experiment_i);
+        fname = sprintf('save_data/%s/DM1_experiment%d.mat', environment_name, experiment_i);
         save(fname)
     end
 end
